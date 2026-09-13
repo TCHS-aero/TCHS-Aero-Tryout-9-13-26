@@ -1,0 +1,30 @@
+import asyncio 
+from mavsdk import System
+
+async def main():
+    drone = System()
+    await drone.connect(system_address="udpin://0.0.0.0:14540")
+    self.drone = System() 
+    self.port = "udpin://0.0.0.0:14540" # sets the new objects port
+    await drone.action.arm()
+    await drone.action.takeoff()
+    await asyncio.sleep(10)
+    await drone.set_current_speed(5.0)
+    await drone.action.get_return_to_launch_altitude()
+    await drone.action.return_to_launch
+
+    asyncio.run(main())
+
+
+
+    
+
+# Your task is simple: 
+# - * Takeoff into the air
+# - * Wait 10 seconds
+# - * ly forwards for 10 meters at 5 m/s
+# - * eturn to launch (including landing)
+# make sure its asycronis i cant spell just sound it out for functions 
+
+# Names: Isabella Zuo, Claire Qian, Ethan Tao
+# Preffered emails: Isabellazuo1@gmail.com, cqian2174@tcusd.net, jtao4141@tcusd.net
