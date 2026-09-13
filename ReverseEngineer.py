@@ -2,7 +2,8 @@ import asyncio #built in python libary that adds ayschonrous synchrounization
 from dataclass import dataclass #redundant
 from typing import NamedTuple #Adds ability to add certain parameters to classes
 from mavsdk import System #Imports libary to control mavlink
-from mavsdk.offboard import PositionGlobalYaw, VelocityNedYaw #Lets you control postion and velocity of the drone
+from mavsdk.offboard import PositionGlobalYaw, VelocityNedYaw
+ #Lets you control postion and velocity of the drone
 
 @dataclass #redundant
 class NedPosition(NamedTuple): #creates class to set the cardinal directions to float not intergers/strings
