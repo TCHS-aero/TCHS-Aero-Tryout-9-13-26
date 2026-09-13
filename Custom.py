@@ -9,9 +9,38 @@
 
 import asyncio
 from mavsdk import System
+from mavsdk.offboard import VelocityNedYaw
+
 
 async def main():
-    drone = System("udpin://0.0.0.0:14540")
+    drone = System()
+    await drone.connect(
+        system_address="udpin://0.0.0.0:14540"
+    )
+    async for state in drone.core.connection_state():
+        if state.is connected:
+            break
+    async for health in drone.telemetry .health():
+        if(
+            health.is_global_position_ok and health.is_home_position_ok
+        ):
+        break
+    await drone.action.set_takeoff_altitude(5)
+    await drone.action.arm()
+    try:
+        await drone.action.takeoff()
+        await async.sleep(10)
+        
+
+
+
+
+
+
+
+    
+
+
 
 if __name__ == "__main__":
     asyncio.run(main)
