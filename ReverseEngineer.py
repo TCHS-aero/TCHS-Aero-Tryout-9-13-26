@@ -14,7 +14,7 @@ class NedPosition(NamedTuple):
     #declares NedPosition class that inherits the library NamedTuple so in the class north, east, and down can inherit float from NamedTuple
 
 class Drone(asyncio): #Creates drone object that inherits library asyncio 
-    def __init__(self, port = "udpin://0.0.0.0:14540"): #initalizes class and states self and port, sets port to udpin
+    def __init__(self, port): #initalizes class and states self and port, sets port to the provided udpin
         self.drone = System() #creates self.drone from System() class
         self.port = port #sets self.port to the already states port in init()
 
@@ -38,22 +38,22 @@ class Drone(asyncio): #Creates drone object that inherits library asyncio
 
         await self.drone.action.takeoff() #sends a request to takeoff the drone, as the drone has been armed and takeoff altitute has been specified
 
-    async def current_ned(self): #creates async def takeoff function
-        telemetry = await next(self.drone.telemetry.position_velocity_ned())
-        ned_object = telemetry.position
+    async def current_ned(self): #creates async def takeoff function with parameter self
+        telemetry = await next(self.drone.telemetry.position_velocity_ned()) #sets telemetry to the next iteration of the iterator self.drone.telemetry.position_velocity_ned() and awaits
+        ned_object = telemetry.position #sets ned_object to telemetry.position
         return NedPosition(
             north = ned_object.north_m, 
             east = ned_object.east_m,
-            down = ned_object.down_m,
-        )
-        
-    async def _right_offset(self, velocity, distance, *, yaw=0):
-        ned_object = await self.current_ned()
-        end_point = ned_object.east + distance
-        await self.drone.offboard.set_velocity_ned(
+            down = ned_object.down_m
+        ) #returns a NedPosition() object with north, east, down in the object being set to the Ned object's north_m, east_m, and down_m, respectively
+    
+    async def _right_offset(self, velocity, distance, *, yaw=0): #creates async def _right_offset with parameters self, velocity, distance, a keyword argument, and sets yaw to 0.
+        ned_object = await self.current_ned() #sets ned_object to the NedPosition() that was returned in self.current_ned()
+        end_point = ned_object.east + distance #grabs ned_object's parameter east and adds the value distance to it, sets it to end point
+        await self.drone.offboard.set_velocity_ned( #sets the velocity_ned of the drone to a VelocityNedYaw() object, with its north_n_s, east_n_s, and down_m_s to the respective variables, while yaw is set to 0.
             VelocityNedYaw(0.0, velocity, 0.0, yaw)
-        )
-        while end_point >= ned_object.east:
+        ) #awaits for 
+        while end_point >= ned_object.east: #if the distance of origin-end_point is greater than the distance of origin-drone east, keep refreshing the ned object with new telemetry and wait 15 seconds.
             ned_object = await self.current_ned()
             await asyncio.sleep(15)
 
@@ -93,7 +93,7 @@ class Drone(asyncio): #Creates drone object that inherits library asyncio
             "l": self._left_offset,
             "r": self._right_offset,
             "f": self._forward_offset,
-            "b": self._backward_offset,
+            "b": self._backward_offset
         }
 
         method = func_map.get(directions)
@@ -128,12 +128,12 @@ async def main():
     await drone_object.drone.offboard.set_velocity_ned(VelocityNedYaw(0.0, 0.0, 0.0, 0.0))
     await drone_object.drone.offboard.start()
 
-    await drone_object.move("forwards", 10, 50)
+    await drone_object.move("f", 10, 50)
     await drone_object.move("r", 10, 50)
-    await drone_object.move("big bird", 10, 50)
+    await drone_object.move("b", 10, 50)
     await drone_object.move("l", 10, 50)
 
-    drone_object.land()
+    await drone_object.land()
 
-if __name__ == "_main__":
+if __name__ == "__main__":
     asyncio.run(main())
