@@ -11,7 +11,16 @@ import asyncio
 from mavsdk import System
 
 async def main():
-    drone = System("udpin://0.0.0.0:14540")
+    drone_object = System("udpin://0.0.0.0:14540")
+    await drone_object.connect()
+    await drone_object.action.arm()
+    await drone_object.action.takeoff()
+    await drone_object.offboard.set_velocity_ned(0.0, 0.0, 0.0, 0.0)
+    await drone_object.move("forwards", 10, 50)
+    await drone_object.action.return_to_launch()
+    await drone_object.action.land()
 
 if __name__ == "__main__":
     asyncio.run(main)
+
+# Zacheus Wu - ewu2055@tcusd.net
