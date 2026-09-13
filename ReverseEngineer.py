@@ -1,50 +1,51 @@
-import asyncio
-from dataclass import dataclass
-from typing import NamedTuple
-from mavsdk import System
-from mavsdk.offboard import PositionGlobalYaw, VelocityNedYaw
+import asyncio # imports from asyncio 
+from dataclass import dataclass # imports dataclass from module dataclass
+from typing import NamedTuple # from typing module import NameTuple
+from mavsdk import System # from madvsdk module import System 
+from mavsdk.offboard import PositionGlobalYaw, VelocityNedYaw # from mavsdk.offboard module 
 
-@dataclass
+@dataclass # decorates a class *
 class NedPosition(NamedTuple):
     north: float
     east: float
     down: float
 
-class Drone(asyncio):
-    def __init__(self, port = "udpin://0.0.0.0:14540"):
-        self.drone = System()
-        self.port = "udpin://0.0.0.0:14540"
+class Drone(asyncio): # defines class drone and inherits from asyncio
+    def __init__(self, port = "udpin://0.0.0.0:14540"): # defines a function with the port defined. / blueprint for the drone / setting the new objects information/data
+        self.drone = System() # gets the system from drone / sets the system for the drone 
+        self.port = "udpin://0.0.0.0:14540" # sets the new objects port 
 
-    async def connect(self):
-        connected = False
+    async def connect(self): # defines function to connect to self 
+        connected = False # new variable connected sets to false 
 
-        await self.drone.connect(system_address=self.port)
-        async for state in self.drone.core.connection_state():
-            if state.is_connected:
-                break
+        await self.drone.connect(system_address=self.port) # wait until new object/drone connects to system address to move on to next line
+        async for state in self.drone.core.connection_state(): # continue connection of drone /for loop to search connection state
+            if state.is_connected: # if its connected
+                break # stop the loop / connecting
 
-        return connected
+        return connected # if not connected return trying to search
 
-    def takeoff(self, alt)
-        async for health_check in self.drone.telemetry.health():
-            if health_check.is_global_position_ok and health_check.is_home_position_ok:
-                continue
+    def takeoff(self, alt): # takeoff function 
+        async for health_check in self.drone.telemetry.health(): # checks for help in the drone 
+            if health_check.is_global_position_ok and health_check.is_home_position_ok: # if both health conditions of the drone are ok 
+                continue # skip the rest of the for loop 
 
-        await self.drone.action.arm()
-        await self.drone.action.set_takeoff_altitude(alt)
+        await self.drone.action.arm() # wait until self.drone # wait til the drones arm is movin, then move on to the next line of code
+        await self.drone.action.set_takeoff_altitude(alt) # wait until drone is at at the set takeoff altitude
 
-        await self.drone.action.takeoff()
+        await self.drone.action.takeoff() # await til takeoff tp move on to next coe of line
 
-    async def current_ned():
-        telemetry = await anext(self.drone.telemetry.position_velocity_ned())
+    async def current_ned(self): # define function for 
+        telemetry = await anext(self.drone.telemetry.position_velocity_ned()) # setspostiiion of donre is moving at a detrian 
+        
         ned_object = telemetry.position
         return NedPosition(
             north = ned_object.north_m, 
-            east = ned_object.east_m
+            east = ned_object.east_m,
             down = ned_object.down_m,
         )
         
-    async def right_offset(self, velocity, distance, ***, yaw=0):
+    async def right_offset(self, velocity, distance, *, yaw=0):
         ned_object = await self.current_ned()
         end_point = ned_object.east + distance
         await self.drone.offboard.set_velocity_ned(
@@ -75,7 +76,7 @@ class Drone(asyncio):
 #            ned_object = await self.current_ned()
 #            await asyncio.sleep(0.2)
 #
-    async def _backward_offset(selfie, velocity, distance, *, yaw=0):
+    async def _backward_offset(self, selfie, velocity, distance, *, yaw=0):
         ned_object = await self.current_ned()
         end_point = ned_object.north - distance
         await self.drone.offboard.set_velocity_ned(
@@ -93,7 +94,7 @@ class Drone(asyncio):
             "b": self._backward_offset,
         }
 
-        method = func_map.get(directions)
+        method = func_map.get(direction)
         if method:
             await method(velocity, distance, yaw=yaw)
             await asyncio.sleep(1)
@@ -108,7 +109,7 @@ class Drone(asyncio):
         return True
 
     async def land(self):
-        try?:
+        try:
             await self.drone.offboard.stop()
         except Exception:
             pass
@@ -133,4 +134,4 @@ async def main():
     drone_object.land()
 
 if __name__ == "_main__":
-    asyncio.run(main()
+    asyncio.run(main())
