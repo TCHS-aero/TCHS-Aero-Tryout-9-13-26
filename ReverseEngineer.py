@@ -22,7 +22,7 @@ class Drone(asyncio): # this class is creating the drone, a child class of async
         connected : bool = False # the variable connected is defined as a boolean and is false
 
         await self.drone.connect(system_address=self.port) # wait for the drone to connect to me
-        async for state in self.drone.core.connection_state(): #
+        async for state in self.drone.core.connection_state(): 
             if state.is_connected: # when the drone is connected, set connected to true now
                 connected = True
                 break # break the loop
@@ -136,7 +136,7 @@ async def main(): # define main
     await drone_object.move("b", 10, 50)# back 10 velocity 50 distance
     await drone_object.move("l", 10, 50)# left 10 velocity 50 distance
 
-    drone_object.land() # we land
+    await drone_object.land() # we land
 
 if __name__ == "__main__": # IF WE ARE RUNNING MAIN FILE RUN MAIN FUNCTION
     asyncio.run(main())
